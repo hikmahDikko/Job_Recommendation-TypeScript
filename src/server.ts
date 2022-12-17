@@ -3,6 +3,7 @@ import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/logging';
+import userRoute from './routes/user';
 
 const router = express();
 
@@ -48,9 +49,12 @@ const StartServer = () => {
     });
 
     //Routes
+    router.use('/users', userRoute);
 
     //HealthCheck
-    router.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong' }));
+    router.get('/ping', (req, res) => {
+        res.status(200).json({ message: 'pong' });
+    });
 
     //Error Handler
     router.use((req, res, next) => {
@@ -59,5 +63,5 @@ const StartServer = () => {
         return res.status(404).json({ message: error.message });
     });
 
-    http.createServer(router).listen((config.server.port, () => Logging.info('Server is running on port ' + config.server.port)));
+    http.createServer(router).listen(config.server.port, () => Logging.info('Server is running on port ' + config.server.port));
 };
