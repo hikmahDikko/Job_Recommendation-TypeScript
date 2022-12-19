@@ -1,44 +1,43 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
-import User from '../models/user';
+import Book from '../models/book';
 
-const createUser = (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body;
-
-    const user = new User({
+const createBook = (req: Request, res: Response, next: NextFunction) => {
+    const { title, userId } = req.body;
+    const book = new Book({
         _id: new mongoose.Types.ObjectId(),
-        name
+        title,
+        userId
     });
 
-    return user
+    return book
         .save()
-        .then(() => res.status(201).json({ user }))
+        .then(() => res.status(201).json({ book }))
         .catch((error) => res.status(500).json({ error }));
 };
 
-const readUser = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.userId;
-
-    return User.findById(userId)
-        .then((user) => (user ? res.status(200).json({ user }) : res.status(404).json({ message: 'Not found' })))
+const readBook = (req: Request, res: Response, next: NextFunction) => {
+    const bookId = req.params.bookId;
+    return Book.findById(bookId)
+        .then((book) => (book ? res.status(200).json({ book }) : res.status(404).json({ message: 'Not found' })))
         .catch((error) => res.status(500).json({ error }));
 };
+
 const readAll = (req: Request, res: Response, next: NextFunction) => {
-    const users = User.find();
-    return users.then((users) => res.status(200).json({ datas: users })).catch((error) => res.status(500).json({ error }));
+    const books = Book.find();
+    return books.then((books) => res.status(200).json({ datas: books })).catch((error) => res.status(500).json({ error }));
 };
 
-const updateUser = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.userId;
-
-    return User.findById(userId)
-        .then((user) => {
-            if (user) {
-                user.set(req.body);
-
-                return user
+const updateBook = (req: Request, res: Response, next: NextFunction) => {
+    const bookId = req.params.userId;
+    return Book.findById(bookId)
+        .select('-__v')
+        .then((book) => {
+            if (book) {
+                book.set(req.body);
+                return book
                     .save()
-                    .then((user) => res.status(201).json({ user }))
+                    .then((book) => res.status(201).json({ book }))
                     .catch((error) => res.status(500).json({ error }));
             } else {
                 res.status(404).json({ message: 'Not found' });
@@ -47,12 +46,10 @@ const updateUser = (req: Request, res: Response, next: NextFunction) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
-const deleteUser = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.userId;
-
-    return User.findByIdAndDelete(userId)
-        .then((user) => (user ? res.status(201).json({ message: 'deleted' }) : res.status(404).json({ message: 'Not found' })))
+const deleteBook = (req: Request, res: Response, next: NextFunction) => {
+    const bookId = req.params.bookId;
+    return Book.findByIdAndDelete(bookId)
+        .then((book) => (book ? res.status(201).json({ message: 'deleted' }) : res.status(404).json({ message: 'Not found' })))
         .catch((error) => res.status(500).json({ error }));
 };
-
-export default { createUser, readAll, readUser, updateUser, deleteUser };
+export default { createBook, readAll, readBook, updateBook, deleteBook };

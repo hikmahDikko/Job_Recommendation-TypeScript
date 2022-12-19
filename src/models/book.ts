@@ -13,15 +13,14 @@ const IBookSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        authorId: {
+        userId: {
             type: Schema.Types.ObjectId,
             required: true,
             ref: 'User'
         }
     },
     {
-        timestamps: true,
-        versionKey: true
+        timestamps: true
     }
 );
 
