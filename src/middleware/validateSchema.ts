@@ -2,7 +2,7 @@ import Joi, { ObjectSchema } from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import Logging from '../library/logging';
 import { IUser } from '../models/user';
-import { IBook } from '../models/book';
+import { IJob } from '../models/job';
 
 export const validateSchema = (schema: ObjectSchema) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -20,26 +20,50 @@ export const validateSchema = (schema: ObjectSchema) => {
 export const schema = {
     user: {
         create: Joi.object<IUser>({
-            name: Joi.string().required()
+            fullName: Joi.string(),
+            email: Joi.string().required().lowercase(),
+            password: Joi.string()
+                .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[\d])[A-Za-z\d]{8,}/)
+                .required(),
+            confirmPassword: Joi.string()
+                .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[\d])[A-Za-z\d]{8,}/)
+                .required()
+                .valid(Joi.ref('password')),
+            role: Joi.string()
         }),
 
+        login: Joi.object<IUser>({
+            email: Joi.string().required(),
+            password: Joi.string().required()
+        }),
         update: Joi.object<IUser>({
-            name: Joi.string().required()
+            fullName: Joi.string(),
+            email: Joi.string(),
+            skill: Joi.string(),
+            yearOfExperience: Joi.string()
         })
     },
-    book: {
-        create: Joi.object<IBook>({
+    job: {
+        create: Joi.object<IJob>({
             userId: Joi.string()
                 .regex(/^[0-9a-fA-F]{24}$/)
                 .required(),
-            title: Joi.string().required()
+            title: Joi.string().required(),
+            description: Joi.string().required(),
+            skill: Joi.string().required(),
+            jobType: Joi.string().required(),
+            location: Joi.string().required()
         }),
 
-        update: Joi.object<IBook>({
+        update: Joi.object<IJob>({
             userId: Joi.string()
                 .regex(/^[0-9a-fA-F]{24}$/)
                 .required(),
-            title: Joi.string().required()
+            title: Joi.string().required(),
+            description: Joi.string().required(),
+            skill: Joi.string().required(),
+            jobType: Joi.string().required(),
+            location: Joi.string().required()
         })
     }
 };
