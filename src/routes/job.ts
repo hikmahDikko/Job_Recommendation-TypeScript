@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/create', auth(User), checkRole('employer'), validateSchema(schema.job.create), controller.createJob);
 router.get('/get/:jobId', auth(User), controller.readJob);
 router.get('/get', auth(User), controller.readAll);
-router.patch('/update/:jobId', auth(User), checkRole('employer'), validateSchema(schema.job.create), controller.updateJob);
+router.patch('/update/:jobId', auth(User), checkRole('employer'), validateSchema(schema.job.update), controller.updateJob);
 router.delete('/delete/:jobId', auth(User), checkRole('employer'), controller.deleteJob);
 
 export = router;
