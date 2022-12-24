@@ -9,6 +9,8 @@ const router = express.Router();
 router.post('/create', auth(User), checkRole('employer'), validateSchema(schema.job.create), controller.createJob);
 router.get('/get/:jobId', auth(User), controller.readJob);
 router.get('/get', auth(User), controller.readAll);
+router.get('/get/recommendations', auth(User), controller.readAllRecommendation);
+router.get('/get/myjobs', auth(User), checkRole('employer'), controller.AllMyJobs);
 router.patch('/update/:jobId', auth(User), checkRole('employer'), validateSchema(schema.job.update), controller.updateJob);
 router.delete('/delete/:jobId', auth(User), checkRole('employer'), controller.deleteJob);
 
